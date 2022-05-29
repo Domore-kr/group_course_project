@@ -1,7 +1,7 @@
 from vk_methods import *
 import json
-
 from vk_api.longpoll import VkLongPoll, VkEventType
+
 with open ('information.json') as f:
     data: dict = json.load(f)
 token: str = data['Token']
@@ -14,7 +14,6 @@ for event in longpoll.listen():
 
         if event.to_me:
             request = event.text
-            
             if request == 'Начать':
                 vk.write_msg(event.user_id, f"Привет, Я чат-бот для знакомств")
             elif request == 'Обо мне':

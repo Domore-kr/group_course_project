@@ -1,12 +1,19 @@
 import vk_api
 from random import randrange
 
+
 class VkBot(vk_api.VkApi):
     def write_msg(self, user_id: int, message: str) -> None:
+        """Метод для отправки сообщений"""
         self.method('messages.send', {'user_id': user_id, 'message': message,  'random_id': randrange(10 ** 7),})
     
     def get_userdata(self, user_id: int) -> dict:
-        response: list = self.method('users.get', {'user_id': user_id, 'fields': 'sex, city, relation, bdate'})
+        """Метод получает информацию о текущем пользователе, который обращается к боту.
+        user_id удобнее заполнять через события получаемые в vk_api.longpoll
+        см. код в main.py"""
+        response: list = self.method('users.get', {
+            'user_id': user_id, 
+            'fields': 'sex, city, relation, bdate'})
         response: dict = response[0]
         userdata: dict = {
             'user_id': user_id, # пускай будет, да
@@ -18,3 +25,15 @@ class VkBot(vk_api.VkApi):
             'bdate': response['bdate']
         }
         return userdata
+    
+    def get_users(self, user_data: dict) -> dict:
+        """Метод для поиска людей из того же города, что и пользователь, противоположного пола"""
+        sex_table = { # это не про секс на столе
+            '1': '2',
+            '2': '1'
+        }
+        user_sex = user_data['sex']
+        required_sex = sex_table['user_sex']
+        city_id = user_data['city_id']
+        self.method('users.search', {'city': city_id, 'sex': required_sex})
+        # я допишу, честно

@@ -13,7 +13,8 @@ class VkBot(vk_api.VkApi):
         см. код в main.py"""
         response: list = self.method('users.get', {
             'user_id': user_id, 
-            'fields': 'sex, city, relation, bdate'})
+            'fields': 'sex, city, relation, bdate'}
+            )
         response: dict = response[0]
         userdata: dict = {
             'user_id': user_id, # пускай будет, да
@@ -27,13 +28,20 @@ class VkBot(vk_api.VkApi):
         return userdata
     
     def get_users(self, user_data: dict) -> dict:
-        """Метод для поиска людей из того же города, что и пользователь, противоположного пола"""
-        sex_table = { # это не про секс на столе
+        """Метод для поиска людей из того же города, что и пользователь,
+        принимает аргумент с словарем полученным из метода get_userdata"""
+        sex_table: dict = { # это не про секс на столе
             '1': '2',
             '2': '1'
         }
-        user_sex = user_data['sex']
-        required_sex = sex_table['user_sex']
-        city_id = user_data['city_id']
-        self.method('users.search', {'city': city_id, 'sex': required_sex})
-        # я допишу, честно
+        user_sex: str = user_data['sex']
+        required_sex: str = sex_table[user_sex]
+        city_id: str = user_data['city_id']
+        results: list = self.method('users.search', {
+            'city': city_id, 
+            'sex': required_sex, 
+            'has_photo': 1}
+            )
+        return results
+        # перечитать с утра, дописать, отдебажить
+        

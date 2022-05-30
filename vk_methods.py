@@ -3,7 +3,7 @@ from random import randrange
 
 
 class VkBot(vk_api.VkApi):
-    
+
     def write_msg(self, user_id: int, message: str) -> None:
         """Метод для отправки сообщений"""
         self.method('messages.send', {'user_id': user_id, 'message': message,  'random_id': randrange(10 ** 7),})
@@ -34,16 +34,19 @@ class VkApp(vk_api.VkApi):
         """Метод для поиска людей из того же города, что и пользователь,
         принимает аргумент с словарем полученным из метода get_userdata"""
         sex_table: dict = { # это не про секс на столе
-            '1': 2,
-            '2': 1
+            1: 2,
+            2: 1
         }
         user_sex: str = user_data['sex']
-        required_sex: str = sex_table[user_sex]
+        required_sex: int = sex_table[user_sex]
         city_id: str = user_data['city_id']
         results: list = self.method('users.search', {
+            'count': 1000,
+            'offset': 0,
+            'status': 1,
             'city': city_id, 
             'sex': required_sex, 
             'has_photo': 1}
             )
+        print(results)
         return results
-        # перечитать с утра, дописать, отдебажить

@@ -3,6 +3,7 @@ from random import randrange
 
 
 class VkBot(vk_api.VkApi):
+    
     def write_msg(self, user_id: int, message: str) -> None:
         """Метод для отправки сообщений"""
         self.method('messages.send', {'user_id': user_id, 'message': message,  'random_id': randrange(10 ** 7),})
@@ -26,9 +27,9 @@ class VkBot(vk_api.VkApi):
             'bdate': response['bdate']
         }
         return userdata
-    
 
-    
+class VkApp(vk_api.VkApi):
+
     def get_users(self, user_data: dict) -> dict:
         """Метод для поиска людей из того же города, что и пользователь,
         принимает аргумент с словарем полученным из метода get_userdata"""
@@ -46,4 +47,3 @@ class VkBot(vk_api.VkApi):
             )
         return results
         # перечитать с утра, дописать, отдебажить
-        

@@ -37,9 +37,9 @@ class VkApp(vk_api.VkApi):
             1: 2,
             2: 1
         }
-        user_sex: str = user_data['sex']
+        user_sex: int = user_data['sex']
         required_sex: int = sex_table[user_sex]
-        city_id: str = user_data['city_id']
+        city_id: int = user_data['city_id']
         results: list = self.method('users.search', {
             'count': 1000,
             'offset': 0,

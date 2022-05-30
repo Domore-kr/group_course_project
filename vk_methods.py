@@ -27,12 +27,14 @@ class VkBot(vk_api.VkApi):
         }
         return userdata
     
+
+    
     def get_users(self, user_data: dict) -> dict:
         """Метод для поиска людей из того же города, что и пользователь,
         принимает аргумент с словарем полученным из метода get_userdata"""
         sex_table: dict = { # это не про секс на столе
-            '1': '2',
-            '2': '1'
+            '1': 2,
+            '2': 1
         }
         user_sex: str = user_data['sex']
         required_sex: str = sex_table[user_sex]

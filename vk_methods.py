@@ -30,6 +30,7 @@ class VkBot(vk_api.VkApi):
         return userdata
 
 
+
 class VkApp(vk_api.VkApi):
 
     def get_users(self, user_data: dict) -> dict:

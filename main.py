@@ -3,12 +3,10 @@ import json
 from random import randint
 from vk_api.longpoll import VkLongPoll, VkEventType
 
-# with open('information.json') as f:
-#     data: dict = json.load(f)
-# token: str = data['Token']
-# access_token: str = data['AccessToken']
-token = '1fd5bbc8500c761628e07ae6ff8f2a61d7a36f3845d9381cba30e95a9f12949ad30bdda04e991b57cf17b'
-access_token = 'a67f00c673c3d4b12800dd0ba29579ec56d804f3c5f3bbcef5328d4b3981fa5987b951cf2c8d8b24b9abd'
+with open('information.json') as f:
+    data: dict = json.load(f)
+token: str = data['Token']
+access_token: str = data['AccessToken']
 bot = VkBot(token=token)
 app = VkApp(token=access_token)
 longpoll = VkLongPoll(bot)

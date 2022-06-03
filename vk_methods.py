@@ -1,13 +1,25 @@
 import vk_api
 from random import randrange
+from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from pprint import pprint
 
 
 class VkBot(vk_api.VkApi):
 
-    def write_msg(self, user_id: int, message: str) -> None:
+    def write_msg(self, user_id: int, message: str, keyboard) -> None:
         """Метод для отправки сообщений"""
-        self.method('messages.send', {'user_id': user_id, 'message': message, 'random_id': randrange(10 ** 7), })
+        keyboard = VkKeyboard()
+        keyboard.add_button('Обо мне', VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Ищи', VkKeyboardColor.PRIMARY)
+        keyboard.add_button('Привет', VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Пока', VkKeyboardColor.NEGATIVE)
+        self.method('messages.send', {
+            'user_id': user_id,
+            'message': message,
+            'random_id': randrange(10 ** 7),
+            'keyboard': keyboard.get_keyboard()
+        }
+                    )
 
     def get_userdata(self, user_id: int) -> dict:
         """Метод получает информацию о текущем пользователе, который обращается к боту.

@@ -29,10 +29,17 @@ for event in longpoll.listen():
                               , keyboard)
             elif request == 'Ищи':
                 parse = app.get_users(bot.get_userdata(event.user_id))['items'][randint(0, 1000)]
+                while parse['is_closed'] == True:
+                    parse = app.get_users(bot.get_userdata(event.user_id))['items'][randint(0, 1000)]
+                    '''
+                    Затычка, если профиль скрыт
+                    '''
+                url = app.give_url(app.get_photo(parse["id"])['items'])
+                app.download_photo(url)
                 name_list = [parse['first_name'], parse['last_name']]  # Список из имени и фамилли
                 photo = app.get_photo(parse["id"])['items'][0]['sizes'][-1]['url']
-                message = ' '.join(name_list) + str(f'\nvk.com/id{parse["id"]}\n')\
-                          + ' '.join(app.give_url(app.get_photo(parse["id"])['items']))  # Сообщение для отправки ботом
+                message = ' '.join(name_list) + str(f'\nvk.com/id{parse["id"]}\n') \
+                          + ' '.join(url)  # Сообщение для отправки ботом
                 bot.write_msg(event.user_id, message, keyboard)
             elif request == "Привет":
                 bot.write_msg(event.user_id, f"Хай, {event.user_id}", keyboard)
@@ -40,4 +47,3 @@ for event in longpoll.listen():
                 bot.write_msg(event.user_id, "Пока((", keyboard)
             else:
                 bot.write_msg(event.user_id, "Не поняла вашего ответа...", keyboard)
-

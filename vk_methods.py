@@ -2,6 +2,7 @@ import vk_api
 from random import randrange
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from pprint import pprint
+import urllib.request
 
 
 class VkBot(vk_api.VkApi):
@@ -9,15 +10,18 @@ class VkBot(vk_api.VkApi):
     def write_msg(self, user_id: int, message: str, keyboard) -> None:
         """Метод для отправки сообщений"""
         keyboard = VkKeyboard()
-        keyboard.add_button('Обо мне', VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Ищи', VkKeyboardColor.PRIMARY)
         keyboard.add_button('Привет', VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Обо мне', VkKeyboardColor.POSITIVE)
+        keyboard.add_line()
+        keyboard.add_button('Ищи', VkKeyboardColor.PRIMARY)
+        keyboard.add_line()
         keyboard.add_button('Пока', VkKeyboardColor.NEGATIVE)
         self.method('messages.send', {
             'user_id': user_id,
             'message': message,
             'random_id': randrange(10 ** 7),
-            'keyboard': keyboard.get_keyboard()
+            'keyboard': keyboard.get_keyboard(),
+            'attachment': f'photo{user_id}_https://sun9-west.userapi.com/sun9-52/s/v1/if1/lkMZBVuZF6Z-04ilvDS8KYBBBVSSviHS7Fxf3gl78ZsuvYCtySrKGjOmB_6cE-02izh-gQ.jpg?size=720x480&quality=96&type=album_a67f00c673c3d4b12800dd0ba29579ec56d804f3c5f3bbcef5328d4b3981fa5987b951cf2c8d8b24b9abd'
         }
                     )
 
@@ -61,7 +65,10 @@ class VkApp(vk_api.VkApi):
             'status': 1,
             'city': city_id,
             'sex': required_sex,
-            'has_photo': 1
+            'has_photo': 1,
+            'fields': {'is_closed': False},
+            'can_access_closed': False,
+            'is_closed': False
         }
                                     )
         # pprint(results)
@@ -98,3 +105,12 @@ class VkApp(vk_api.VkApi):
             url.append(get_photo[get_key(id_dict, max(id_dict.values()))]['sizes'][-1]['url'])
             id_dict.pop(get_key(id_dict, max(id_dict.values())), max(id_dict.values()))
         return url
+
+    def download_photo(self, url):
+        count = 1
+        for i in url:
+            img = urllib.request.urlopen(i).read()
+            out = open(f"img{count}.jpg", "wb")
+            out.write(img)
+            out.close()
+            count += 1

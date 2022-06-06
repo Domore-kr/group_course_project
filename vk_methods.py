@@ -2,7 +2,6 @@ import vk_api
 from random import randrange
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from pprint import pprint
-import urllib.request
 
 
 class VkBot(vk_api.VkApi):
@@ -20,8 +19,7 @@ class VkBot(vk_api.VkApi):
             'user_id': user_id,
             'message': message,
             'random_id': randrange(10 ** 7),
-            'keyboard': keyboard.get_keyboard(),
-            'attachment': f'photo{user_id}_https://sun9-west.userapi.com/sun9-52/s/v1/if1/lkMZBVuZF6Z-04ilvDS8KYBBBVSSviHS7Fxf3gl78ZsuvYCtySrKGjOmB_6cE-02izh-gQ.jpg?size=720x480&quality=96&type=album_a67f00c673c3d4b12800dd0ba29579ec56d804f3c5f3bbcef5328d4b3981fa5987b951cf2c8d8b24b9abd'
+            'keyboard': keyboard.get_keyboard()
         }
                     )
 
@@ -44,8 +42,38 @@ class VkBot(vk_api.VkApi):
             'bdate': response['bdate']
         }
         return userdata
-
-
+    
+    def send_attachment(self, user_id: int, photos: list) -> None:
+        """Принимает в себя список фотографий, высылает их как вложение"""
+        if len(photos) == 3:
+            first_photo = 'photo' + str(photos[0]['owner_id']) + '_' + str(photos[0]['id'])
+            second_photo = 'photo' + str(photos[1]['owner_id']) + '_' + str(photos[1]['id'])
+            third_photo = 'photo' + str(photos[2]['owner_id']) + '_' + str(photos[2]['id'])
+            self.method('messages.send', {
+                'user_id': user_id,
+                'attachment': f'{first_photo},{second_photo},{third_photo}',
+                'random_id': randrange(10 ** 7)
+            }   
+            )
+        elif len(photos) == 2:
+            first_photo = 'photo' + str(photos[0]['owner_id']) + '_' + str(photos[0]['id'])
+            second_photo = 'photo' + str(photos[1]['owner_id']) + '_' + str(photos[1]['id'])
+            self.method('messages.send', {
+                'user_id': user_id,
+                'attachment': f'{first_photo},{second_photo}',
+                'random_id': randrange(10 ** 7)
+            }   
+            )
+        elif len(photos) == 1:
+            first_photo = 'photo' + str(photos[0]['owner_id']) + '_' + str(photos[0]['id'])
+            self.method('messages.send', {
+                'user_id': user_id,
+                'attachment': f'{first_photo}',
+                'random_id': randrange(10 ** 7)
+            }   
+            )
+        else:
+            pass
 
 class VkApp(vk_api.VkApi):
 
@@ -65,16 +93,13 @@ class VkApp(vk_api.VkApi):
             'status': 1,
             'city': city_id,
             'sex': required_sex,
-            'has_photo': 1,
-            'fields': {'is_closed': False},
-            'can_access_closed': False,
-            'is_closed': False
+            'has_photo': 1
         }
                                     )
-        # pprint(results)
         return results
 
-    def get_photo(self, id) -> list: # Дает всю информацию о фото
+    def get_photo(self, id: int) -> dict:
+        """Метод возвращает список фотографий в профиле по id пользователя"""
         results: list = self.method('photos.get', {
             'owner_id': id,
             'album_id': 'profile',
@@ -84,33 +109,18 @@ class VkApp(vk_api.VkApi):
             'photo_sizes': 1
         }
                                     )
-        # pprint(results)
         return results
-
-    def give_url(self, get_photo) -> list: # Возвращает список url с наибольшим количеством лайков
-        url = []
-        count = 0
-        id_dict = {}
-
-        def get_key(d, value):
-            for k, v in d.items():
-                if v == value:
-                    return k
-
-        for i in get_photo:
-            id_dict[count] = i['likes']['count']
-            count += 1
-
-        while len(url) < 3:
-            url.append(get_photo[get_key(id_dict, max(id_dict.values()))]['sizes'][-1]['url'])
-            id_dict.pop(get_key(id_dict, max(id_dict.values())), max(id_dict.values()))
-        return url
-
-    def download_photo(self, url):
-        count = 1
-        for i in url:
-            img = urllib.request.urlopen(i).read()
-            out = open(f"img{count}.jpg", "wb")
-            out.write(img)
-            out.close()
-            count += 1
+    
+    def get_top_three(self, photos: dict) -> list:
+        """Метод принимает список с фотографиями пользователя,
+        возвращает список из трех с наибольшим числом лайков"""
+        photos: list = photos['items']
+        top_three: list = []
+        first_entry: dict = photos.pop(0)
+        top_three.append(first_entry)
+        for entry in photos:
+            if entry['likes']['count'] >= top_three[0]['likes']['count']:
+                top_three.insert(0, entry)
+            if len(top_three) == 4:
+                top_three.pop(3)
+        return top_three

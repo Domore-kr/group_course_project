@@ -28,19 +28,18 @@ for event in longpoll.listen():
                 Родились {data['bdate']}"""
                               , keyboard)
             elif request == 'Ищи':
-                parse = app.get_users(bot.get_userdata(event.user_id))['items'][randint(0, 1000)]
-                while parse['is_closed'] == True:
-                    parse = app.get_users(bot.get_userdata(event.user_id))['items'][randint(0, 1000)]
-                    '''
-                    Затычка, если профиль скрыт
-                    '''
-                url = app.give_url(app.get_photo(parse["id"])['items'])
-                app.download_photo(url)
-                name_list = [parse['first_name'], parse['last_name']]  # Список из имени и фамилли
-                photo = app.get_photo(parse["id"])['items'][0]['sizes'][-1]['url']
-                message = ' '.join(name_list) + str(f'\nvk.com/id{parse["id"]}\n') \
-                          + ' '.join(url)  # Сообщение для отправки ботом
+                parse = app.get_users(bot.get_userdata(event.user_id))['items']
+                upper_barrier = len(parse) - 1
+                parsed_person = parse[randint(0, upper_barrier)]
+                while parsed_person['is_closed'] == True:
+                    parsed_person = parse[randint(0, upper_barrier)]
+                    #Затычка, если профиль скрыт
+                name_list = [parsed_person['first_name'], parsed_person['last_name']]  # Список из имени и фамилли
+                photo = app.get_photo(parsed_person['id'])
+                top_three = app.get_top_three(photo)
+                message = ' '.join(name_list) + str(f'\nvk.com/id{parsed_person["id"]}\n') # Сообщение для отправки ботом
                 bot.write_msg(event.user_id, message, keyboard)
+                bot.send_attachment(event.user_id, top_three)
             elif request == "Привет":
                 bot.write_msg(event.user_id, f"Хай, {event.user_id}", keyboard)
             elif request == "Пока":

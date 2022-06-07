@@ -33,11 +33,12 @@ for event in longpoll.listen():
                 parsed_person = parse[randint(0, upper_barrier)]
                 while parsed_person['is_closed'] == True:
                     parsed_person = parse[randint(0, upper_barrier)]
-                    #Затычка, если профиль скрыт
+                    # Затычка, если профиль скрыт
                 name_list = [parsed_person['first_name'], parsed_person['last_name']]  # Список из имени и фамилли
                 photo = app.get_photo(parsed_person['id'])
                 top_three = app.get_top_three(photo)
-                message = ' '.join(name_list) + str(f'\nvk.com/id{parsed_person["id"]}\n') # Сообщение для отправки ботом
+                message = ' '.join(name_list) + str(
+                    f'\nvk.com/id{parsed_person["id"]}\n')  # Сообщение для отправки ботом
                 bot.write_msg(event.user_id, message, keyboard)
                 bot.send_attachment(event.user_id, top_three)
             elif request == "Привет":

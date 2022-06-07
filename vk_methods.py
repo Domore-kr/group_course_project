@@ -42,7 +42,7 @@ class VkBot(vk_api.VkApi):
             'bdate': response['bdate']
         }
         return userdata
-    
+
     def send_attachment(self, user_id: int, photos: list) -> None:
         """Принимает в себя список фотографий, высылает их как вложение"""
         if len(photos) == 3:
@@ -53,8 +53,8 @@ class VkBot(vk_api.VkApi):
                 'user_id': user_id,
                 'attachment': f'{first_photo},{second_photo},{third_photo}',
                 'random_id': randrange(10 ** 7)
-            }   
-            )
+            }
+                        )
         elif len(photos) == 2:
             first_photo = 'photo' + str(photos[0]['owner_id']) + '_' + str(photos[0]['id'])
             second_photo = 'photo' + str(photos[1]['owner_id']) + '_' + str(photos[1]['id'])
@@ -62,18 +62,19 @@ class VkBot(vk_api.VkApi):
                 'user_id': user_id,
                 'attachment': f'{first_photo},{second_photo}',
                 'random_id': randrange(10 ** 7)
-            }   
-            )
+            }
+                        )
         elif len(photos) == 1:
             first_photo = 'photo' + str(photos[0]['owner_id']) + '_' + str(photos[0]['id'])
             self.method('messages.send', {
                 'user_id': user_id,
                 'attachment': f'{first_photo}',
                 'random_id': randrange(10 ** 7)
-            }   
-            )
+            }
+                        )
         else:
             pass
+
 
 class VkApp(vk_api.VkApi):
 
@@ -110,17 +111,44 @@ class VkApp(vk_api.VkApi):
         }
                                     )
         return results
-    
+
     def get_top_three(self, photos: dict) -> list:
         """Метод принимает список с фотографиями пользователя,
         возвращает список из трех с наибольшим числом лайков"""
-        photos: list = photos['items']
         top_three: list = []
-        first_entry: dict = photos.pop(0)
-        top_three.append(first_entry)
-        for entry in photos:
-            if entry['likes']['count'] >= top_three[0]['likes']['count']:
-                top_three.insert(0, entry)
-            if len(top_three) == 4:
-                top_three.pop(3)
-        return top_three
+        count = 0 # Счетчик для записи фото в словарь
+        id_dict = {} # словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
+
+        def get_key(d, value):
+            for k, v in d.items():
+                if v == value:
+                    return k
+
+        for i in photos['items']:
+            '''
+            Перебирает фотки и создает словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
+            '''
+            id_dict[count] = i['likes']['count']
+            count += 1
+
+        if len(id_dict) < 3:
+            '''
+            Если в профиле менее трех фото, запускается этот скрипт'''
+            photos: list = photos['items']
+            top_three: list = []
+            first_entry: dict = photos.pop(0)
+            top_three.append(first_entry)
+            for entry in photos:
+                if entry['likes']['count'] >= top_three[0]['likes']['count']:
+                    top_three.insert(0, entry)
+                if len(top_three) == 4:
+                    top_three.pop(3)
+            return top_three
+        else:
+            while len(top_three) < 3:
+                '''
+                Перебирает словарь с лайками и добавляет в список на возврат самые залайканые фото 
+                '''
+                top_three.append(photos['items'][get_key(id_dict, max(id_dict.values()))])
+                id_dict.pop(get_key(id_dict, max(id_dict.values())), max(id_dict.values()))
+            return top_three

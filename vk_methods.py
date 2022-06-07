@@ -125,15 +125,11 @@ class VkApp(vk_api.VkApi):
                     return k
 
         for i in photos['items']:
-            '''
-            Перебирает фотки и создает словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
-            '''
+            #Перебирает фотки и создает словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
             id_dict[count] = i['likes']['count']
             count += 1
 
         if len(id_dict) < 3:
-            '''
-            Если в профиле менее трех фото, запускается этот скрипт'''
             photos: list = photos['items']
             top_three: list = []
             first_entry: dict = photos.pop(0)

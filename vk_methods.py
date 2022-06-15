@@ -114,7 +114,6 @@ class VkApp(vk_api.VkApi):
                 min_age = 18
             max_age = difference + 3
             search_params.update({'age_from': min_age, 'age_to': max_age})
-            # посчитать минимальный и максимальный возраст, вставить их в search_params
         results: list = self.method('users.search', search_params)
         return results
 

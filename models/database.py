@@ -1,4 +1,4 @@
-"""Создание подключения к БД и объявление базы"""
+#Создание подключения к БД и объявление базы
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker

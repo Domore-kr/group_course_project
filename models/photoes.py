@@ -1,4 +1,4 @@
-"""Таблица Фотографии"""
+#Таблица Фотографии
 import sqlalchemy as sq
 
 from models.database import Base

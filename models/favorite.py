@@ -1,4 +1,4 @@
-"""Таблица Избранные"""
+#Таблица Избранные
 import sqlalchemy as sq
 
 from models.database import Base

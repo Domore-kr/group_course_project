@@ -1,4 +1,4 @@
-"""Таблица Пользователи"""
+#Таблица Пользователи
 import sqlalchemy as sq
 from sqlalchemy.orm import relationship
 

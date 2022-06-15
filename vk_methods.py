@@ -1,4 +1,5 @@
 import vk_api
+import datetime
 from random import randrange
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from pprint import pprint
@@ -81,14 +82,21 @@ class VkApp(vk_api.VkApi):
     def get_users(self, user_data: dict) -> dict:
         """Метод для поиска людей из того же города, что и пользователь,
         принимает аргумент с словарем полученным из метода get_userdata"""
-        sex_table: dict = {  # это не про секс на столе
+        sex_table: dict = {  # таблица для того, чтобы поиск шел по противоположному полу
             1: 2,
             2: 1
         }
+        try: # если есть дата рождения, то идёт распарсинг
+            bdate: str = user_data['bdate']
+            splitted_bdate: list = bdate.split(sep='.')
+            if len(splitted_bdate) == 3:
+                bdate: int = int(splitted_bdate[2])
+        except KeyError:
+            bdate: None = None
         user_sex: int = user_data['sex']
         required_sex: int = sex_table[user_sex]
         city_id: int = user_data['city_id']
-        results: list = self.method('users.search', {
+        search_params: dict = {
             'count': 1000,
             'offset': 0,
             'status': 1,
@@ -96,7 +104,18 @@ class VkApp(vk_api.VkApi):
             'sex': required_sex,
             'has_photo': 1
         }
-                                    )
+        if bdate is None:
+            pass
+        else:
+            current_date: int = datetime.date.today().year
+            difference = current_date - bdate
+            min_age = difference - 3
+            if min_age < 18:
+                min_age = 18
+            max_age = difference + 3
+            search_params.update({'age_from': min_age, 'age_to': max_age})
+            # посчитать минимальный и максимальный возраст, вставить их в search_params
+        results: list = self.method('users.search', search_params)
         return results
 
     def get_photo(self, id: int) -> dict:
@@ -116,8 +135,8 @@ class VkApp(vk_api.VkApi):
         """Метод принимает список с фотографиями пользователя,
         возвращает список из трех с наибольшим числом лайков"""
         top_three: list = []
-        count = 0 # Счетчик для записи фото в словарь
-        id_dict = {} # словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
+        count: int = 0 # Счетчик для записи фото в словарь
+        id_dict: dict = {} # словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
 
         def get_key(d, value):
             for k, v in d.items():

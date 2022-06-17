@@ -2,7 +2,6 @@ import vk_api
 import datetime
 from random import randrange
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
-from pprint import pprint
 
 
 class VkBot(vk_api.VkApi):

@@ -34,7 +34,7 @@ def basic_search_scenario():
         f'\nvk.com/id{parsed_person["id"]}\n')  # Сообщение для отправки ботом
     bot.write_msg(event.user_id, message, keyboard)
     bot.send_attachment(event.user_id, top_three)
-
+    return [parsed_person['id'], top_three]
 
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW:

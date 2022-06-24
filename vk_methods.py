@@ -2,6 +2,7 @@ import vk_api
 import datetime
 from random import randrange
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+from pprint import pprint
 
 
 class VkBot(vk_api.VkApi):
@@ -39,8 +40,11 @@ class VkBot(vk_api.VkApi):
             'sex': response['sex'],
             'city_id': response['city']['id'],
             'city_title': response['city']['title'],
-            'bdate': response['bdate']
         }
+        if 'bdate' in response:
+            userdata['bdate'] = response['bdate']
+        else:
+            userdata['bdate'] = None
         return userdata
 
     def send_attachment(self, user_id: int, photos: list) -> None:
@@ -85,13 +89,7 @@ class VkApp(vk_api.VkApi):
             1: 2,
             2: 1
         }
-        try: # если есть дата рождения, то идёт распарсинг
-            bdate: str = user_data['bdate']
-            splitted_bdate: list = bdate.split(sep='.')
-            if len(splitted_bdate) == 3:
-                bdate: int = int(splitted_bdate[2])
-        except KeyError:
-            bdate: None = None
+        bdate: str = user_data['bdate']
         user_sex: int = user_data['sex']
         required_sex: int = sex_table[user_sex]
         city_id: int = user_data['city_id']
@@ -106,6 +104,9 @@ class VkApp(vk_api.VkApi):
         if bdate is None:
             pass
         else:
+            splitted_bdate: list = bdate.split(sep='.')
+            if len(splitted_bdate) == 3:
+                bdate: int = int(splitted_bdate[2])
             current_date: int = datetime.date.today().year
             difference = current_date - bdate
             min_age = difference - 3

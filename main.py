@@ -17,7 +17,7 @@ def user_info():
     message = f"""Вас зовут {data['first_name']} {data['last_name']},
 Ваш пол в виде id {data['sex']}
 Вы из {data['city_title']}
-Родились {data['bdate']}"""
+Родились: {data['bdate']}"""
     bot.write_msg(event.user_id, message, keyboard)
 
 def basic_search_scenario():

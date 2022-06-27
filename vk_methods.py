@@ -56,7 +56,7 @@ class VkBot(vk_api.VkApi):
             if attachment is None:
                 attachment = (f'photo{owner_id}_{id}')
             else:
-                attachment= attachment + ',' + (f'photo{owner_id}_{id}') 
+                attachment = attachment + ',' + (f'photo{owner_id}_{id}') 
         self.method('messages.send', {
                 'user_id': user_id,
                 'attachment': attachment,

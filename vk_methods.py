@@ -49,36 +49,21 @@ class VkBot(vk_api.VkApi):
 
     def send_attachment(self, user_id: int, photos: list) -> None:
         """Принимает в себя список фотографий, высылает их как вложение"""
-        if len(photos) == 3:
-            first_photo = 'photo' + str(photos[0]['owner_id']) + '_' + str(photos[0]['id'])
-            second_photo = 'photo' + str(photos[1]['owner_id']) + '_' + str(photos[1]['id'])
-            third_photo = 'photo' + str(photos[2]['owner_id']) + '_' + str(photos[2]['id'])
-            self.method('messages.send', {
+        attachment: None = None
+        for photo in photos:
+            owner_id = photo['owner_id']
+            id = photo['id']
+            if attachment is None:
+                attachment = (f'photo{owner_id}_{id}')
+            else:
+                attachment= attachment + ',' + (f'photo{owner_id}_{id}') 
+        self.method('messages.send', {
                 'user_id': user_id,
-                'attachment': f'{first_photo},{second_photo},{third_photo}',
+                'attachment': attachment,
                 'random_id': randrange(10 ** 7)
             }
                         )
-        elif len(photos) == 2:
-            first_photo = 'photo' + str(photos[0]['owner_id']) + '_' + str(photos[0]['id'])
-            second_photo = 'photo' + str(photos[1]['owner_id']) + '_' + str(photos[1]['id'])
-            self.method('messages.send', {
-                'user_id': user_id,
-                'attachment': f'{first_photo},{second_photo}',
-                'random_id': randrange(10 ** 7)
-            }
-                        )
-        elif len(photos) == 1:
-            first_photo = 'photo' + str(photos[0]['owner_id']) + '_' + str(photos[0]['id'])
-            self.method('messages.send', {
-                'user_id': user_id,
-                'attachment': f'{first_photo}',
-                'random_id': randrange(10 ** 7)
-            }
-                        )
-        else:
-            pass
-
+        
 
 class VkApp(vk_api.VkApi):
 

@@ -101,9 +101,7 @@ class VkApp(vk_api.VkApi):
             'sex': required_sex,
             'has_photo': 1
         }
-        if bdate is None:
-            pass
-        else:
+        if bdate:
             splitted_bdate: list = bdate.split(sep='.')
             if len(splitted_bdate) == 3:
                 bdate: int = int(splitted_bdate[2])
@@ -134,8 +132,8 @@ class VkApp(vk_api.VkApi):
         """Метод принимает список с фотографиями пользователя,
         возвращает список из трех с наибольшим числом лайков"""
         top_three: list = []
-        count: int = 0 # Счетчик для записи фото в словарь
-        id_dict: dict = {} # словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
+        count: int = 0  # Счетчик для записи фото в словарь
+        id_dict: dict = {}  # словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
 
         def get_key(d, value):
             for k, v in d.items():
@@ -143,7 +141,7 @@ class VkApp(vk_api.VkApi):
                     return k
 
         for i in photos['items']:
-            #Перебирает фотки и создает словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
+            # Перебирает фотки и создает словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков
             id_dict[count] = i['likes']['count']
             count += 1
 

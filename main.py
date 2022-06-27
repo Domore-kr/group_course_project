@@ -12,6 +12,7 @@ app = VkApp(token=access_token)
 longpoll = VkLongPoll(bot)
 keyboard = VkKeyboard()
 
+
 def user_info():
     data = bot.get_userdata(event.user_id)
     message = f"""Вас зовут {data['first_name']} {data['last_name']},
@@ -20,11 +21,12 @@ def user_info():
 Родились: {data['bdate']}"""
     bot.write_msg(event.user_id, message, keyboard)
 
+
 def basic_search_scenario():
     parse: list = app.get_users(bot.get_userdata(event.user_id))['items']
     upper_barrier: int = len(parse) - 1
     parsed_person: dict = parse[randint(0, upper_barrier)]
-    while parsed_person['is_closed'] == True:
+    while parsed_person['is_closed']:
         parsed_person = parse[randint(0, upper_barrier)]
         # Затычка, если профиль скрыт
     name_list: list = [parsed_person['first_name'], parsed_person['last_name']]  # Список из имени и фамилли
@@ -35,6 +37,7 @@ def basic_search_scenario():
     bot.write_msg(event.user_id, message, keyboard)
     bot.send_attachment(event.user_id, top_three)
     return [parsed_person['id'], top_three]
+
 
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW:

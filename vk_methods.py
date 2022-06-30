@@ -6,9 +6,29 @@ from pprint import pprint
 
 
 class VkBot(vk_api.VkApi):
+    '''Класс VkBot отвечает за функционал бота
+
+    Основное применение - отправка сообщений пользователю
+
+    Methods
+    -------
+    write_msg(self, user_id: int, message: str, keyboard)
+        Отправляет текстовое сообщение пользователю, ничего не возвращает
+    get_userdata(self, user_id: int)
+        Получает информацию о текущем пользователе и возвращает ее в виде dict
+    send_attachment(self, user_id: int, photos: list)
+        Отправляет пользователю список фотографий, как вложение, ничего не возвращает
+    '''
 
     def write_msg(self, user_id: int, message: str, keyboard) -> None:
-        """Метод для отправки сообщений"""
+        """Метод для отправки сообщений
+
+        param user_id: id пользователя
+        param message: сообщение, отправляемое пользователю
+        param keyboard: клавиатура
+
+        """
+
         keyboard = VkKeyboard()
         keyboard.add_button('Привет', VkKeyboardColor.POSITIVE)
         keyboard.add_button('Обо мне', VkKeyboardColor.POSITIVE)
@@ -26,8 +46,11 @@ class VkBot(vk_api.VkApi):
 
     def get_userdata(self, user_id: int) -> dict:
         """Метод получает информацию о текущем пользователе, который обращается к боту.
-        user_id удобнее заполнять через события получаемые в vk_api.longpoll
-        см. код в main.py"""
+
+        param user_id: id пользователя
+
+        """
+
         response: list = self.method('users.get', {
             'user_id': user_id,
             'fields': 'sex, city, relation, bdate'}
@@ -48,7 +71,12 @@ class VkBot(vk_api.VkApi):
         return userdata
 
     def send_attachment(self, user_id: int, photos: list) -> None:
-        """Принимает в себя список фотографий, высылает их как вложение"""
+        """Принимает в себя список фотографий, высылает их как вложение
+
+        param user_id: id пользователя
+        param photos: список фото
+
+        """
         attachment: None = None
         for photo in photos:
             owner_id = photo['owner_id']
@@ -56,20 +84,34 @@ class VkBot(vk_api.VkApi):
             if attachment is None:
                 attachment = (f'photo{owner_id}_{id}')
             else:
-                attachment = attachment + ',' + (f'photo{owner_id}_{id}') 
+                attachment = attachment + ',' + (f'photo{owner_id}_{id}')
         self.method('messages.send', {
-                'user_id': user_id,
-                'attachment': attachment,
-                'random_id': randrange(10 ** 7)
-            }
-                        )
-        
+            'user_id': user_id,
+            'attachment': attachment,
+            'random_id': randrange(10 ** 7)
+        }
+                    )
+
 
 class VkApp(vk_api.VkApi):
+    '''Класс VkApp парсит страницы вк для отправки пользователю
 
+    Methods
+    -------
+    get_users(self, user_data: dict)
+        Парсит страницы ВК для дальнейшей отправки подходящих пользователю, возвращает dict
+    get_photo(self, id: int)
+        Возвращает dict фотографий профиля по id пользователя
+    get_top_three(self, photos: dict)
+        Возвращает list из трех или менее самых залайканных фото профиля по id пользователя
+
+    '''
     def get_users(self, user_data: dict) -> dict:
-        """Метод для поиска людей из того же города, что и пользователь,
-        принимает аргумент с словарем полученным из метода get_userdata"""
+        """Метод для поиска людей из того же города, что и пользователь, и примерного возраста пользователя
+
+        param user_data: Словарь с информацией о текущем пользователе
+
+        """
         sex_table: dict = {  # таблица для того, чтобы поиск шел по противоположному полу
             1: 2,
             2: 1
@@ -101,7 +143,11 @@ class VkApp(vk_api.VkApi):
         return results
 
     def get_photo(self, id: int) -> dict:
-        """Метод возвращает список фотографий в профиле по id пользователя"""
+        """Метод возвращает список фотографий в профиле по id пользователя
+
+        param id: id страницы вк, из которой будут доставаться фото
+
+        """
         results: list = self.method('photos.get', {
             'owner_id': id,
             'album_id': 'profile',
@@ -115,7 +161,11 @@ class VkApp(vk_api.VkApi):
 
     def get_top_three(self, photos: dict) -> list:
         """Метод принимает список с фотографиями пользователя,
-        возвращает список из трех с наибольшим числом лайков"""
+        возвращает список из трех с наибольшим числом лайков
+
+        param photos: Словарь фотографий со страницы пользователя
+
+        """
         top_three: list = []
         count: int = 0  # Счетчик для записи фото в словарь
         id_dict: dict = {}  # словарь, где ключ - порядковый номер в списке фото, а значение - количество лайков

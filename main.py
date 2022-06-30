@@ -14,6 +14,8 @@ keyboard = VkKeyboard()
 
 
 def user_info():
+    '''Отправляет пользователю сообщение с информацией, доступной на его странице'''
+
     data = bot.get_userdata(event.user_id)
     message = f"""Вас зовут {data['first_name']} {data['last_name']},
 Ваш пол в виде id {data['sex']}
@@ -22,7 +24,9 @@ def user_info():
     bot.write_msg(event.user_id, message, keyboard)
 
 
-def basic_search_scenario():
+def basic_search_scenario() -> list:
+    '''Отправляет пользователю сообщения, содержащие имя, ссылку и три фото кандидатуры для знакомства'''
+
     parse: list = app.get_users(bot.get_userdata(event.user_id))['items']
     upper_barrier: int = len(parse) - 1
     parsed_person: dict = parse[randint(0, upper_barrier)]

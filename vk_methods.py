@@ -193,9 +193,7 @@ class VkApp(vk_api.VkApi):
             return top_three
         else:
             while len(top_three) < 3:
-                '''
-                Перебирает словарь с лайками и добавляет в список на возврат самые залайканые фото 
-                '''
+                # Перебирает словарь с лайками и добавляет в список на возврат самые залайканые фото 
                 top_three.append(photos['items'][get_key(id_dict, max(id_dict.values()))])
                 id_dict.pop(get_key(id_dict, max(id_dict.values())), max(id_dict.values()))
             return top_three

@@ -56,6 +56,7 @@ for event in longpoll.listen():
             elif request == 'Ищи':
                 info = []
                 info.append(basic_search_scenario())
+                # Сюда по идее записывается информация для БД и дальше крутится в модуле create_batabase
             if request == "Добавить в избранное":
                 create_database(user_info=info[0][0], user_photos=info[0][1])
                 bot.write_msg(event.user_id, "Ну вроде записал", keyboard)

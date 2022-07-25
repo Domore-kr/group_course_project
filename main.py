@@ -2,6 +2,7 @@ from vk_methods import *
 import json
 from random import randint
 from vk_api.longpoll import VkLongPoll, VkEventType
+from create_batabase import create_database, _load_fake_data
 
 with open('information.json') as f:
     data: dict = json.load(f)
@@ -40,7 +41,7 @@ def basic_search_scenario() -> list:
         f'\nvk.com/id{parsed_person["id"]}\n')  # Сообщение для отправки ботом
     bot.write_msg(event.user_id, message, keyboard)
     bot.send_attachment(event.user_id, top_three)
-    return [parsed_person['id'], top_three]
+    return [parsed_person, top_three]
 
 
 for event in longpoll.listen():
@@ -53,10 +54,12 @@ for event in longpoll.listen():
             elif request == 'Обо мне':
                 user_info()
             elif request == 'Ищи':
-                basic_search_scenario()
-            elif request == "Привет":
-                bot.write_msg(event.user_id, f"Хай, {event.user_id}", keyboard)
-            elif request == "Пока":
+                info = []
+                info.append(basic_search_scenario())
+            if request == "Добавить в избранное":
+                create_database(user_info=info[0][0], user_photos=info[0][1])
+                bot.write_msg(event.user_id, "Ну вроде записал", keyboard)
+            elif request == "Показать избранное":
                 bot.write_msg(event.user_id, "Пока((", keyboard)
             else:
                 bot.write_msg(event.user_id, "Не поняла вашего ответа...", keyboard)

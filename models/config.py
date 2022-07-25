@@ -2,4 +2,4 @@
 host = 'localhost:5432'
 user = 'course'
 password = 'course'
-db_name = 'postgres'
+db_name = 'course_work'

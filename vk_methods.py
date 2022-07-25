@@ -30,12 +30,12 @@ class VkBot(vk_api.VkApi):
         """
 
         keyboard = VkKeyboard()
-        keyboard.add_button('Привет', VkKeyboardColor.POSITIVE)
         keyboard.add_button('Обо мне', VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Ищи', VkKeyboardColor.POSITIVE)
         keyboard.add_line()
-        keyboard.add_button('Ищи', VkKeyboardColor.PRIMARY)
+        keyboard.add_button('Добавить в избранное', VkKeyboardColor.PRIMARY)
         keyboard.add_line()
-        keyboard.add_button('Пока', VkKeyboardColor.NEGATIVE)
+        keyboard.add_button('Показать избранное', VkKeyboardColor.NEGATIVE)
         self.method('messages.send', {
             'user_id': user_id,
             'message': message,

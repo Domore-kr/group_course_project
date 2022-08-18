@@ -142,7 +142,7 @@ class VkApp(vk_api.VkApi):
         results: list = self.method('users.search', search_params)
         return results
 
-    def get_photo(self, id: int) -> dict:
+    def get_photo(self, id: int) -> list:
         """Метод возвращает список фотографий в профиле по id пользователя
 
         param id: id страницы вк, из которой будут доставаться фото

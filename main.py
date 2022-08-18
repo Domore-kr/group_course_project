@@ -25,9 +25,8 @@ def user_info():
     bot.write_msg(event.user_id, message, keyboard)
 
 
-def basic_search_scenario() -> list:
-    '''Отправляет пользователю сообщения, содержащие имя, ссылку и три фото кандидатуры для знакомства'''
-
+def parsed_person() -> list:
+    '''Функция формирует словарь, содержащий информацию о пользователе, а также три лучшие фотографии'''
     parse: list = app.get_users(bot.get_userdata(event.user_id))['items']
     upper_barrier: int = len(parse) - 1
     parsed_person: dict = parse[randint(0, upper_barrier)]
@@ -37,11 +36,19 @@ def basic_search_scenario() -> list:
     name_list: list = [parsed_person['first_name'], parsed_person['last_name']]  # Список из имени и фамилли
     photo: dict = app.get_photo(parsed_person['id'])
     top_three: list = app.get_top_three(photo)
-    message: str = ' '.join(name_list) + str(
-        f'\nvk.com/id{parsed_person["id"]}\n')  # Сообщение для отправки ботом
+    return [name_list, parsed_person, top_three]
+
+
+def basic_search_scenario(information):
+    '''Отправляет пользователю сообщения, содержащие имя, ссылку и три фото кандидатуры для знакомства
+
+    param information: словарь, содержащий информацию о пользователе, а также три лучшие фотографии
+
+    '''
+    message: str = ' '.join(information[0]) + str(
+        f'\nvk.com/id{information[1]["id"]}\n')  # Сообщение для отправки ботом
     bot.write_msg(event.user_id, message, keyboard)
-    bot.send_attachment(event.user_id, top_three)
-    return [parsed_person, top_three]
+    bot.send_attachment(event.user_id, information[2])
 
 
 for event in longpoll.listen():
@@ -54,12 +61,11 @@ for event in longpoll.listen():
             elif request == 'Обо мне':
                 user_info()
             elif request == 'Ищи':
-                info = []
-                info.append(basic_search_scenario())
-                # Сюда по идее записывается информация для БД и дальше крутится в модуле create_batabase
-            if request == "Добавить в избранное":
-                create_database(user_info=info[0][0], user_photos=info[0][1])
+                information = parsed_person()
+                basic_search_scenario(information)
+            elif request == "Добавить в избранное":
                 bot.write_msg(event.user_id, "Ну вроде записал", keyboard)
+                # create_database()
             elif request == "Показать избранное":
                 bot.write_msg(event.user_id, "Пока((", keyboard)
             else:

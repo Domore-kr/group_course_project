@@ -2,7 +2,7 @@ from vk_methods import *
 import json
 from random import randint
 from vk_api.longpoll import VkLongPoll, VkEventType
-from create_batabase import create_database, _load_fake_data
+from my_database import insert_db, select_db, select_db_photos
 
 with open('information.json') as f:
     data: dict = json.load(f)
@@ -26,7 +26,7 @@ def user_info():
 
 
 def parsed_person() -> list:
-    '''Функция формирует словарь, содержащий информацию о пользователе, а также три лучшие фотографии'''
+    '''Функция формирует словарь, содержащий информацию о фаворите, а также три лучшие фотографии'''
     parse: list = app.get_users(bot.get_userdata(event.user_id))['items']
     upper_barrier: int = len(parse) - 1
     parsed_person: dict = parse[randint(0, upper_barrier)]
@@ -34,7 +34,7 @@ def parsed_person() -> list:
         parsed_person = parse[randint(0, upper_barrier)]
         # Затычка, если профиль скрыт
     name_list: list = [parsed_person['first_name'], parsed_person['last_name']]  # Список из имени и фамилли
-    photo: dict = app.get_photo(parsed_person['id'])
+    photo: list = app.get_photo(parsed_person['id'])
     top_three: list = app.get_top_three(photo)
     return [name_list, parsed_person, top_three]
 
@@ -64,9 +64,13 @@ for event in longpoll.listen():
                 information = parsed_person()
                 basic_search_scenario(information)
             elif request == "Добавить в избранное":
+                insert_db(information, bot.get_userdata(event.user_id)['user_id'])
                 bot.write_msg(event.user_id, "Ну вроде записал", keyboard)
-                # create_database()
             elif request == "Показать избранное":
-                bot.write_msg(event.user_id, "Пока((", keyboard)
+                for favorites in select_db(bot.get_userdata(event.user_id)['user_id']):
+                    message: str = ' '.join(favorites[4:6]) + str(
+                        f'\n{favorites[6]}\n')
+                    bot.write_msg(event.user_id, message, keyboard)
+                    bot.send_attachment(bot.get_userdata(event.user_id)['user_id'], select_db_photos(favorites[2]))
             else:
                 bot.write_msg(event.user_id, "Не поняла вашего ответа...", keyboard)

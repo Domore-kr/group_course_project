@@ -77,7 +77,7 @@ class VkBot(vk_api.VkApi):
         param photos: список фото
 
         """
-        attachment: None = None
+        attachment = None
         for photo in photos:
             owner_id = photo['owner_id']
             id = photo['id']
@@ -106,7 +106,7 @@ class VkApp(vk_api.VkApi):
         Возвращает list из трех или менее самых залайканных фото профиля по id пользователя
 
     '''
-    def get_users(self, user_data: dict) -> dict:
+    def get_users(self, user_data: dict) -> list:
         """Метод для поиска людей из того же города, что и пользователь, и примерного возраста пользователя
 
         param user_data: Словарь с информацией о текущем пользователе

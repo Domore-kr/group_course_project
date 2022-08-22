@@ -11,8 +11,6 @@ def create_table_db():
             password=password,
             database=db_name
         )
-        # the cursor for performing database operations
-        # cursor = connection.cursor()
 
         with connection.cursor() as cursor:
             cursor.execute(
@@ -43,9 +41,7 @@ def create_table_db():
         print('[INFO] Error while working with PostgreSQL', _ex)
     finally:
         if connection:
-            # cursor.close()
             connection.close()
-            print('[INFO] PostgreSQL connection closed')
 
 
 def insert_db(information: list, user_id):
@@ -101,9 +97,7 @@ def insert_db(information: list, user_id):
         print('[INFO] Error while working with PostgreSQL', _ex)
     finally:
         if connection:
-            # cursor.close()
             connection.close()
-            print('[INFO] PostgreSQL connection closed')
 
 
 def select_db(user_id):
@@ -132,9 +126,7 @@ def select_db(user_id):
         print('[INFO] Error while working with PostgreSQL', _ex)
     finally:
         if connection:
-            # cursor.close()
             connection.close()
-            print('[INFO] PostgreSQL connection closed')
 
 
 def select_db_photos(favorite_id):
@@ -168,4 +160,3 @@ def select_db_photos(favorite_id):
     finally:
         if connection:
             connection.close()
-            print('[INFO] PostgreSQL connection closed')

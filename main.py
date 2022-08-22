@@ -2,7 +2,7 @@ from vk_methods import *
 import json
 from random import randint
 from vk_api.longpoll import VkLongPoll, VkEventType
-from my_database import insert_db, select_db, select_db_photos
+from my_database import insert_db, select_db, select_db_photos, create_table_db
 
 with open('information.json') as f:
     data: dict = json.load(f)
@@ -64,6 +64,7 @@ for event in longpoll.listen():
                 information = parsed_person()
                 basic_search_scenario(information)
             elif request == "Добавить в избранное":
+                create_table_db()
                 insert_db(information, bot.get_userdata(event.user_id)['user_id'])
                 bot.write_msg(event.user_id, "Ну вроде записал", keyboard)
             elif request == "Показать избранное":

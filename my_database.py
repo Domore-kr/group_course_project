@@ -2,7 +2,12 @@ import psycopg2
 from config import host, user, password, db_name
 
 
-def create_table_db():
+def create_table_db() -> None:
+    '''
+
+    Метод для заполнения базы данныз таблицами
+
+    '''
     try:
         # connect to exist database
         connection = psycopg2.connect(
@@ -44,7 +49,18 @@ def create_table_db():
             connection.close()
 
 
-def insert_db(information: list, user_id):
+def insert_db(information: list, user_id: int) -> None:
+    '''
+    Метод для заполнения БД данным об избранных фаворитах
+    Parameters
+    ----------
+    information: список, содержащий данные о фаворите
+    user_id: id текущего пользователя
+
+    Returns
+    -------
+
+    '''
     try:
         # connect to exist database
         connection = psycopg2.connect(
@@ -100,7 +116,17 @@ def insert_db(information: list, user_id):
             connection.close()
 
 
-def select_db(user_id):
+def select_db(user_id) -> list:
+    '''
+    Метод для вывода информации из БД об избранных фаворитов
+    Parameters
+    ----------
+    user_id: id текущего пользователя
+
+    Returns
+    -------
+
+    '''
     try:
         # connect to exist database
         connection = psycopg2.connect(
@@ -129,7 +155,17 @@ def select_db(user_id):
             connection.close()
 
 
-def select_db_photos(favorite_id):
+def select_db_photos(favorite_id) -> list:
+    '''
+    Метод для вывода ключевой информации к фотографиям
+    Parameters
+    ----------
+    favorite_id: id фаворита
+
+    Returns
+    -------
+
+    '''
     try:
         # connect to exist database
         connection = psycopg2.connect(
